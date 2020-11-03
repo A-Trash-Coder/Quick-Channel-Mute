@@ -1,6 +1,6 @@
 const { Plugin } = require('powercord/entities');
 const { Icon } = require('powercord/components')
-const { getModule, getModuleByDisplayName, React } = require('powercord/webpack')
+const { getModule, getModuleByDisplayName, React, i18n: { Messages } } = require('powercord/webpack')
 const { inject, uninject } = require('powercord/injector')
 
 module.exports = class QuickMute extends Plugin {
@@ -13,17 +13,17 @@ module.exports = class QuickMute extends Plugin {
         inject('quick-mute-at-channel', ChannelItem, 'default', args => {
             args[0].children.unshift(React.createElement(
                 'div', { className: classes.iconItem }, React.createElement(
-                    Tooltip, { text: args[0]['muted'] ? 'Quick Un-Mute Channel' : 'Quick Mute Channel' }, props => React.createElement(Icon, {
+                    Tooltip, { text: args[0]['muted'] ? Messages["UNMUTE_CHANNEL_GENERIC"] : Messages["MUTE_CHANNEL_GENERIC"] }, props => React.createElement(Icon, {
                         ...props,
-                        name: 'Close',
+                        name: args[0]['muted'] ? 'BellOff' : 'Bell',
                         className: classes.actionIcon,
                         width: 16,
                         height: 16,
                         onClick: () => {
                             if (!args[0]['muted']) {
-                                mod.updateChannelOverrideSettings(args[0]['channel']['guild_id'], args[0]['channel']['id'], this.getMuteConfig(10000, 0, true))
+                                mod.updateChannelOverrideSettings(args[0]['channel']['guild_id'], args[0]['channel']['id'], { muted: true })
                             } else {
-                                mod.updateChannelOverrideSettings(args[0]['channel']['guild_id'], args[0]['channel']['id'], this.getMuteConfig(0, 0, false))
+                                mod.updateChannelOverrideSettings(args[0]['channel']['guild_id'], args[0]['channel']['id'], { muted: false })
                             }
                         }
                     })
@@ -32,15 +32,6 @@ module.exports = class QuickMute extends Plugin {
             return args
         }, true)
         ChannelItem.default.displayName = 'ChannelItem'
-    }
-
-    getMuteConfig(h, m, muted) {
-        const s = h * 3600 + m * 60
-        return {
-            muted: muted, mute_config: {
-                end_time: new Date(Date.now() + s * 1000).toISOString(), selected_time_window: s
-            }
-        }
     }
 
     pluginWillUnload() {
