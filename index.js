@@ -11,7 +11,7 @@ module.exports = class QuickMute extends Plugin {
         const mod = getModule(['updateChannelOverrideSettings'], false)
 
         inject('quick-mute-at-channel', ChannelItem, 'default', args => {
-            if (args[0]['channel']['type'] == 2) { return args; };
+            if (args[0]['channel']['type'] == 2 || args[0]['channel']['type'] == 13) { return args; };
             args[0].children.unshift(React.createElement(
                 'div', { className: classes.iconItem }, React.createElement(
                     Tooltip, { text: args[0]['muted'] ? Messages["UNMUTE_CHANNEL_GENERIC"] : Messages["MUTE_CHANNEL_GENERIC"] }, props => React.createElement(Icon, {
