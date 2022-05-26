@@ -32,7 +32,6 @@ module.exports = class QuickMute extends Plugin {
             ))
             return args
         }, true)
-        ChannelItem.default.displayName = 'ChannelItem'
     }
 
     pluginWillUnload() {
